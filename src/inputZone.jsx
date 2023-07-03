@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function InputZone(props) {
+function InputZone({ handleClick }) {
   const [newInput, setNewInput] = useState("");
 
   function handleChange(event) {
@@ -22,7 +22,7 @@ function InputZone(props) {
       <div>
         <button
           onClick={() => {
-            props.handleClick(newInput);
+            handleClick(newInput);
             setNewInput("");
           }}
         >
