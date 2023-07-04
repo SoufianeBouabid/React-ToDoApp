@@ -7,7 +7,7 @@ function InputZone() {
     async function fetchData() {
       try {
         const response = await fetch(
-          "https://jsonplaceholder.typicode.com/todos"
+          "https://jsonplaceholder.typicode.com/posts"
         );
         const jsonData = await response.json();
 
