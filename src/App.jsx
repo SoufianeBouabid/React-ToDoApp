@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ToDoList from "./todoList";
 import InputZone from "./inputZone";
+import GetData from "./apiData.jsx";
 
 function App() {
   const currentDate = new Date().toLocaleDateString();
@@ -8,7 +9,6 @@ function App() {
   const [items, setItems] = useState(() => {
     const localValue = localStorage.getItem("items");
     if (localValue == null) return [];
-
     return JSON.parse(localValue);
   });
 
@@ -37,10 +37,10 @@ function App() {
     <>
       <h1>To do list {currentDate}</h1>
       <InputZone handleClick={handleClick} />
-
       <ToDoList listItems={items} handleDelete={handleDelete} />
+      <GetData />
     </>
   );
 }
-
+//use async wait and todos and add or delete the todos
 export default App;
