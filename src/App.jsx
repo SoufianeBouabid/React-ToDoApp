@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import ToDoList from "./todoList";
+// import ToDoList from "./todoList";
 import InputZone from "./inputZone";
-import GetData from "./apiData.jsx";
 
 function App() {
   const currentDate = new Date().toLocaleDateString();
@@ -37,8 +36,7 @@ function App() {
     <>
       <h1>To do list {currentDate}</h1>
       <InputZone handleClick={handleClick} />
-      <ToDoList listItems={items} handleDelete={handleDelete} />
-      <GetData />
+      {/* <ToDoList listItems={items} handleDelete={handleDelete} /> */}
     </>
   );
 }
