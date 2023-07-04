@@ -41,6 +41,10 @@ function InputZone() {
       });
   };
 
+  const handleDelete = (id) => {
+    setPosts(posts.filter((post) => post.id !== id));
+  };
+
   return (
     <>
       <div>
@@ -65,9 +69,7 @@ function InputZone() {
             <div key={post.id}>
               <p>{post.userId}</p>
               <h2>{post.title}</h2>
-              <div>
-                <button>Delete</button>
-              </div>
+              <button onClick={() => handleDelete(post.id)}>Delete</button>
             </div>
           );
         })}

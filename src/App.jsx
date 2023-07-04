@@ -5,37 +5,33 @@ import InputZone from "./inputZone";
 function App() {
   const currentDate = new Date().toLocaleDateString();
 
-  const [items, setItems] = useState(() => {
-    const localValue = localStorage.getItem("items");
-    if (localValue == null) return [];
-    return JSON.parse(localValue);
-  });
+  // const [items, setItems] = useState(() => {
+  //   const localValue = localStorage.getItem("items");
+  //   if (localValue == null) return [];
+  //   return JSON.parse(localValue);
+  // });
 
-  useEffect(
-    () => localStorage.setItem("items", JSON.stringify(items)),
-    [items]
-  );
-  // we use useEffect o run the localStorage function everytime a change happens in the second parameter of the function
-  //which is our array
+  // useEffect(
+  //   () => localStorage.setItem("items", JSON.stringify(items)),
+  //   [items]
+  // );
+  // // we use useEffect o run the localStorage function everytime a change happens in the second parameter of the function
+  // //which is our array
 
-  function handleClick(value) {
-    setItems([
-      ...items,
-      {
-        id: Date.now(),
-        value,
-      },
-    ]);
-  }
-
-  function handleDelete(id) {
-    setItems(items.filter((item) => item.id !== id));
-  }
+  // function handleClick(value) {
+  //   setItems([
+  //     ...items,
+  //     {
+  //       id: Date.now(),
+  //       value,
+  //     },
+  //   ]);
+  // }
 
   return (
     <>
       <h1>To do list {currentDate}</h1>
-      <InputZone handleClick={handleClick} />
+      <InputZone />
       {/* <ToDoList listItems={items} handleDelete={handleDelete} /> */}
     </>
   );
