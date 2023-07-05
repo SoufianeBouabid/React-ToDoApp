@@ -1,26 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { MyContext } from "./App";
 
 function InputZone() {
-  const [posts, setPosts] = useState([]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(
-          "https://jsonplaceholder.typicode.com/posts"
-        );
-        const jsonData = await response.json();
-
-        setPosts(jsonData);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, []);
+  const { posts, setPosts } = useContext(MyContext);
 
   const handleSubmit = (e) => {
     e.preventDefault(); //to prevent refreshing
+    console.log(e);
 
     fetch("https://jsonplaceholder.typicode.com/posts", {
       method: "POST",
@@ -41,41 +27,34 @@ function InputZone() {
       });
   };
 
-  const handleDelete = (id) => {
-    setPosts(posts.filter((post) => post.id !== id));
-  };
-
   return (
-    <>
-      <div>
-        <h2>Add new To Do</h2>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="userId">UserId</label>
-          <input
-            type="text"
-            placeholder="insert your UserID title"
-            id="userId"
-          />
-          <label htmlFor="title">Title</label>
-          <textarea placeholder="insert a new Todo title" id="title"></textarea>
-          <button type="submit">
-            <span>Add</span>
-          </button>
-        </form>
-      </div>
-      <div>
-        {posts.map((post) => {
-          return (
-            <div key={post.id}>
-              <p>{post.userId}</p>
-              <h2>{post.title}</h2>
-              <button onClick={() => handleDelete(post.id)}>Delete</button>
-            </div>
-          );
-        })}
-      </div>
-    </>
+    <div>
+      <h2>Add new To Do</h2>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="userId">UserId</label>
+        <input
+          type="text"
+          placeholder="insert your UserID title"
+          id="userId"
+          name="userId"
+        />
+        <label htmlFor="title">Title</label>
+        <textarea
+          placeholder="insert a new Todo title"
+          id="title"
+          name="title"
+          //Each input element should have a unique name attribute so that the data entered in the input can be identified and accessed on the server-side when the form is submitted
+        ></textarea>
+        <button type="submit">
+          <span>Add</span>
+        </button>
+      </form>
+    </div>
   );
 }
 
-export default InputZone;
+export default InputZone; //nom de fichier et component majucule
+//validation fu form avant de pusher via react hook form pour validation de formulaire
+//userId number title required
+//tout géré par contexte api
+//delete and patch call api

@@ -1,40 +1,27 @@
-import React, { useEffect, useState } from "react";
-// import ToDoList from "./todoList";
+import React, { useState } from "react";
+import { createContext } from "react";
+import FetchData from "./fetchData";
 import InputZone from "./inputZone";
+
+export const MyContext = createContext({ posts: [], setPost: () => {} });//useReducer
 
 function App() {
   const currentDate = new Date().toLocaleDateString();
-
-  // const [items, setItems] = useState(() => {
-  //   const localValue = localStorage.getItem("items");
-  //   if (localValue == null) return [];
-  //   return JSON.parse(localValue);
-  // });
-
-  // useEffect(
-  //   () => localStorage.setItem("items", JSON.stringify(items)),
-  //   [items]
-  // );
-  // // we use useEffect o run the localStorage function everytime a change happens in the second parameter of the function
-  // //which is our array
-
-  // function handleClick(value) {
-  //   setItems([
-  //     ...items,
-  //     {
-  //       id: Date.now(),
-  //       value,
-  //     },
-  //   ]);
-  // }
+  const [posts, setPosts] = useState([]);
 
   return (
     <>
+      <div>
+        <MyContext.Provider value={{ posts, setPosts }}>
+          <InputZone />
+          <FetchData />
+        </MyContext.Provider>
+      </div>
       <h1>To do list {currentDate}</h1>
       <InputZone />
-      {/* <ToDoList listItems={items} handleDelete={handleDelete} /> */}
+      <FetchData />
     </>
   );
 }
-//use async wait and todos and add or delete the todos
+
 export default App;
