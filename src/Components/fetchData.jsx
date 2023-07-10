@@ -1,42 +1,23 @@
-// import React, { useEffect, useContext } from "react";
-// import { MyContext } from "./App";
+import React, { useContext, useEffect } from "react";
+import { AppContext, ACTIONS } from "../App.jsx";
 
-// function FetchData() {
-//   const { posts, setPosts } = useContext(MyContext);
-// //validation avant de set les post 
-//   const handleDelete = (id) => {
-//     setPosts(posts.filter((post) => post.id !== id));
-//   };
-// //swr au lieu de useffect et fetch data 
-//   useEffect(() => {
-//     async function fetchData() {
-//       try {
-//         const response = await fetch(
-//           "https://jsonplaceholder.typicode.com/posts"
-//         );
-//         const jsonData = await response.json();
+export default function FetchData() {
+  const { dispatch } = useContext(AppContext);
 
-//         setPosts(jsonData);
-//       } catch (error) {
-//         console.log(error);
-//       }
-//     }
-//     fetchData();
-//   }, []);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch(
+          "https://jsonplaceholder.typicode.com/posts"
+        );
+        const jsonData = await response.json();
+        dispatch({ type: ACTIONS.ADD_TOTAL_POSTS, payload: jsonData });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+  }, [dispatch]);
 
-//   return (
-//     <div>
-//       {posts.map((post) => {
-//         return (
-//           <div key={post.id}>
-//             <p>{post.userId}</p>
-//             <h2>{post.title}</h2>
-//             <button onClick={() => handleDelete(post.id)}>Delete</button>
-//           </div>
-//         );
-//       })}
-//     </div>
-//   );
-// }
-
-// export default FetchData;
+  return null;
+}
