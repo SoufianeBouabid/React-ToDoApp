@@ -37,8 +37,6 @@ export function reducer(posts, action) {
 
 function App() {
   const [posts, dispatch] = useReducer(reducer, []);
-  // const [userId, setUserId] = useState("");
-  // const [title, setTitle] = useState("");
 
   return (
     <AppContext.Provider value={{ posts, dispatch }}>
