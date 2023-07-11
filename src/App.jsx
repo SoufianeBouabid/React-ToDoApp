@@ -23,8 +23,7 @@ export function reducer(posts, action) {
     case ACTIONS.UPDATE_POST:
       console.log(posts);
       console.log(action.payload);
-      return posts.map((post
-        ) =>
+      return posts.map((post) =>
         post.id === action.payload.id ? action.payload : post
       );
 
