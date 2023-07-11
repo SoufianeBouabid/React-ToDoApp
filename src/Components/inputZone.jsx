@@ -1,7 +1,10 @@
 import React, { useContext, useState } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { AppContext, ACTIONS } from "../App.jsx";
+import * as yup from "yup";
 import styles from "../Styling/colors.css";
 import Modal from "./Modal";
+import { useForm } from "react-hook-form";
 
 export default function InputZone() {
   const { posts, dispatch } = useContext(AppContext);
@@ -12,9 +15,24 @@ export default function InputZone() {
   const [selectedPostId, setSelectedPostId] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const schema = yup.object().shape({
+    userId: yup
+      .number()
+      .positive()
+      .integer()
+      .required("Your usedId is required"),
+    title: yup.string().min(5).required("Please enter a To Do"),
+  });
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = async (e) => {
     try {
       const res = await fetch("https://jsonplaceholder.typicode.com/posts", {
         method: "POST",
@@ -49,58 +67,38 @@ export default function InputZone() {
 
   const handleOpenModal = (id, userId, title) => {
     setSelectedPostId(id);
-    setUpdateUserId(userId);
+    setUpdateUserId(userId); //work with the previous states
     setUpdateTitle(title);
     setIsOpen(true);
   };
 
-  const handleUpdate = async (id) => {
-    try {
-      const result = await fetch(
-        `https://jsonplaceholder.typicode.com/posts/${id}`,
-        {
-          method: "PATCH",
-          body: JSON.stringify({
-            userId: updateUserId,
-            title: updateTitle,
-          }),
-          headers: {
-            "Content-type": "application/json",
-          },
-        }
-      );
-
-      const updatedPost = await result.json();
-      console.log(updatedPost);
-      dispatch({ type: ACTIONS.UPDATE_POST, payload: { ...updatedPost, id } });
-      setIsOpen(false);
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
   return (
     <>
       <div>
         <h2 className={styles.heading}>Add new Post</h2>
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
           <label htmlFor="userId">User ID</label>
           <input
-            type="text"
+            {...register("userId")}
+            type="number"
             placeholder="Enter User ID"
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
             className={styles.input}
           />
+
+          <p className="errorMessage">{errors.userId?.message}</p>
           <label htmlFor="title">Title</label>
-          <textarea
+          <input
+            {...register("title")}
             placeholder="Enter Post Title"
+            type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className={styles.input}
-          ></textarea>
-          <button type="submit" className={styles.button}>
-            <span>Add</span>
-          </button>
+          />
+          <p className="errorMessage">{errors.title?.message}</p>
+          <input type="submit" className={styles.button} />
         </form>
         <ul className={styles.list}>
           {posts.map((post) => (
@@ -133,7 +131,6 @@ export default function InputZone() {
         updateUserId={updateUserId}
         updateTitle={updateTitle}
         setIsOpen={setIsOpen}
-        handleUpdate={handleUpdate}
         selectedPostId={selectedPostId}
       />
     </>

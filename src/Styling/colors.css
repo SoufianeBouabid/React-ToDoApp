@@ -63,3 +63,7 @@ li h2 {
 li button {
   margin-right: 10px;
 }
+
+.errorMessage{
+  color:red;
+}

@@ -1,6 +1,7 @@
 import React, { createContext, useReducer, useState, useEffect } from "react";
 import FetchData from "./Components/FetchData";
 import InputZone from "./Components/InputZone";
+import Modal from "./Components/Modal";
 import styles from "./Styling/colors.css";
 
 export const AppContext = createContext();
@@ -43,6 +44,7 @@ function App() {
       <div className={styles.container}>
         <FetchData />
         <InputZone />
+        <Modal />
       </div>
     </AppContext.Provider>
   );

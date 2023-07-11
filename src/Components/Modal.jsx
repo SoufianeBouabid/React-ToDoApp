@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import ReactModal from "react-modal";
+import { AppContext, ACTIONS } from "../App.jsx";
 
 export default function Modal({
   isOpen,
@@ -8,9 +9,35 @@ export default function Modal({
   setUpdateUserId,
   updateTitle,
   setUpdateTitle,
-  handleUpdate,
   selectedPostId,
 }) {
+  const { posts, dispatch } = useContext(AppContext);
+
+  async function onSubmit(id) {
+    try {
+      const result = await fetch(
+        `https://jsonplaceholder.typicode.com/posts/${id}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            userId: updateUserId,
+            title: updateTitle,
+          }),
+          headers: {
+            "Content-type": "application/json",
+          },
+        }
+      ); //use in component
+
+      const updatedPost = await result.json();
+      console.log(updatedPost);
+      dispatch({ type: ACTIONS.UPDATE_POST, payload: { ...updatedPost, id } });
+      setIsOpen(false);
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
   return (
     <ReactModal isOpen={isOpen}>
       <input
@@ -25,7 +52,7 @@ export default function Modal({
         value={updateTitle}
         onChange={(e) => setUpdateTitle(e.target.value)}
       />
-      <button onClick={() => handleUpdate(selectedPostId)}>Update</button>
+      <button onClick={() => onSubmit(selectedPostId)}>Update</button>
       <button onClick={() => setIsOpen(false)}>Close</button>
     </ReactModal>
   );
@@ -54,3 +81,4 @@ export default function Modal({
 //     transform: "translate(-50%, -50%)",
 //   },
 // };
+//check tag dialogue

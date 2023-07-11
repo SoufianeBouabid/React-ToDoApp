@@ -21,3 +21,5 @@ export default function FetchData() {
 
   return null;
 }
+
+//use swr 
