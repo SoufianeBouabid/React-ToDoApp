@@ -15,6 +15,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.1",
     "react-modal": "^3.16.1",
+    "swr": "^2.2.0",
     "yup": "^1.2.0"
   },
   "devDependencies": {

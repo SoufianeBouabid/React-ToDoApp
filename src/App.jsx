@@ -1,8 +1,9 @@
 import React, { createContext, useReducer, useState, useEffect } from "react";
-import FetchData from "./Components/FetchData";
+
 import InputZone from "./Components/InputZone";
 import Modal from "./Components/Modal";
 import styles from "./Styling/colors.css";
+import useSWR from "swr";
 
 export const AppContext = createContext();
 
@@ -13,7 +14,7 @@ export const ACTIONS = {
   ADD_TOTAL_POSTS: "add-total-post",
 };
 
-export function reducer(posts, action) {
+function reducer(posts, action) {
   switch (action.type) {
     case ACTIONS.ADD_POST:
       return [action.payload, ...posts];
@@ -38,11 +39,24 @@ export function reducer(posts, action) {
 
 function App() {
   const [posts, dispatch] = useReducer(reducer, []);
+  const fetcher = (url) =>
+    fetch(url)
+      .then((res) => res.json())
+      .catch((err) => {
+        console.error(err);
+      });
+
+  const { data, error, isLoading } = useSWR(
+    "https://jsonplaceholder.typicode.com/posts",
+    fetcher
+  );
+  if (posts.length == 0 && data) {
+    dispatch({ type: ACTIONS.ADD_TOTAL_POSTS, payload: data });
+  }
 
   return (
     <AppContext.Provider value={{ posts, dispatch }}>
       <div className={styles.container}>
-        <FetchData />
         <InputZone />
         <Modal />
       </div>
