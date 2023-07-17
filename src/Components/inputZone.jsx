@@ -5,14 +5,18 @@ import * as yup from "yup";
 import styles from "../Styling/colors.css";
 import Modal from "./Modal";
 import { useForm } from "react-hook-form";
+import useSWRMutation from "swr/mutation";
+import useSWR from "swr";
+import { mutate } from "swr";
 
 export default function InputZone() {
   const { posts, dispatch } = useContext(AppContext);
+
   const [userId, setUserId] = useState("");
   const [title, setTitle] = useState("");
-  const [updateUserId, setUpdateUserId] = useState("");
-  const [updateTitle, setUpdateTitle] = useState("");
   const [selectedPostId, setSelectedPostId] = useState("");
+  const [updateTitle, setUpdateTitle] = useState("");
+  const [updateUserId, setUpdateUserId] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
   const schema = yup.object().shape({
@@ -32,38 +36,57 @@ export default function InputZone() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (e) => {
-    try {
-      const res = await fetch("https://jsonplaceholder.typicode.com/posts", {
-        method: "POST",
-        body: JSON.stringify({
-          userId: userId,
-          title: title,
-        }),
-        headers: {
-          "Content-type": "application/json",
-        },
+  const { trigger: triggerSubmit } = useSWRMutation(
+    "https://jsonplaceholder.typicode.com/posts",
+    onFormSubmit
+  );
+
+  async function onFormSubmit(url) {
+    await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ userId, title }),
+    })
+      .then((res) => res.json())
+      .then((newPost) => {
+        dispatch({
+          type: ACTIONS.ADD_POST,
+          payload: { ...newPost, id: Math.random() },
+        });
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
+  }
 
-      const newPost = { ...(await res.json()), id: Math.random() };
+  // const fetcher = (url) => fetch(url).then((res) => res.json());
+  // const { data, mutate } = useSWR(
+  //   "https://jsonplaceholder.typicode.com/posts/",
+  //   fetcher
+  // );
+  // const triggerDelete = async (postId) => {
+  //   await fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
+  //     method: "DELETE",
+  //   });
+  //   //dispatch({ type: ACTIONS.DELETE_POST, payload: postId });
+  //   mutate(posts.filter((post) => post.id !== postId));
+  //};
 
-      dispatch({ type: ACTIONS.ADD_POST, payload: newPost });
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
+  async function handleDelete(url, { arg }) {
+    console.log( arg);
 
-  const handleDelete = async (id) => {
-    try {
-      await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
-        method: "DELETE",
-      });
+    await fetch(url + arg.id, {
+      method: "DELETE",
+    });
+    dispatch({ type: ACTIONS.DELETE_POST, payload: { id: arg.id } });
+  }
 
-      dispatch({ type: ACTIONS.DELETE_POST, payload: { id } });
-    } catch (err) {
-      console.log(err.message);
-    }
-  };
+  const { trigger: triggerDelete } = useSWRMutation(
+    `https://jsonplaceholder.typicode.com/posts/`,
+    handleDelete
+  );
 
   const handleOpenModal = (id, userId, title) => {
     setSelectedPostId(id);
@@ -76,7 +99,14 @@ export default function InputZone() {
     <>
       <div>
         <h2 className={styles.heading}>Add new Post</h2>
-        <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+        <form
+          onSubmit={handleSubmit((data) => {
+            triggerSubmit(data, {
+              onSuccess: () => console.log("Submission done"),
+            });
+          })}
+          className={styles.form}
+        >
           <label htmlFor="userId">User ID</label>
           <input
             {...register("userId")}
@@ -106,7 +136,7 @@ export default function InputZone() {
               <p>{post.userId}</p>
               <h2>{post.title}</h2>
               <button
-                onClick={() => handleDelete(post.id)}
+                onClick={() => triggerDelete({ id: post.id })}
                 className={styles.deleteButton}
               >
                 Delete

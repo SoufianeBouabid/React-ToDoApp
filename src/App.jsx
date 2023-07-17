@@ -1,4 +1,9 @@
 import React, { createContext, useReducer, useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+// import Home from "./pages/Home";
+// import Blogs from "./pages/Blogs";
+// import Contact from "./pages/Contact";
+// import NoPage from "./pages/NoPage";
 
 import InputZone from "./Components/InputZone";
 import Modal from "./Components/Modal";
@@ -47,7 +52,7 @@ function App() {
       });
 
   const { data, error, isLoading } = useSWR(
-    "https://jsonplaceholder.typicode.com/posts",
+    "https://jsonplaceholder.typicode.com/posts/",
     fetcher
   );
   if (posts.length == 0 && data) {
